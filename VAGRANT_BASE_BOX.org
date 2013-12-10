@@ -228,14 +228,21 @@ Defaults    env_keep="SSH_AUTH_SOCK"
 
 ** Host, somewhere.
 
-   This particular box is available here:
-   https://ctct.box.com/jedcn-saucy64-box, so you can add the
-   following to a =Vagrantfile=:
+   This particular box is available for download. If you visit here:
+   https://ctct.box.com/jedcn-saucy64-box you can download it. Once
+   downloaded, you can run the =vagrant box add= command from above,
+   and then setup your =Vagrantfile= to look like:
 
 #+BEGIN_SRC ruby
   Vagrant.configure("2") do |config|
     # Every Vagrant virtual environment requires a box to build off of.
     config.vm.box = "saucy64"
-    config.vm.box_url = "https://ctct.box.com/jedcn-saucy64-box"
   end
+#+END_SRC
+
+   Depending on demand (none?) I can make the box available via a
+   better hosting service so that you can add something like:
+
+#+BEGIN_SRC ruby
+  config.vm.box_url = "https://somewhere.com/saucy64.box"
 #+END_SRC
