@@ -1,5 +1,4 @@
 * Building a Vagrant Base Box
-
 ** Objective
 
    [[http://vagrantup.com][Vagrant]] provides examples of getting started using a base box named
@@ -26,7 +25,20 @@
    + [[https://github.com/fespinoza/checklist_and_guides/wiki/Creating-a-vagrant-base-box-for-ubuntu-12.04-32bit-server][fespinoza's Checklist for a Basebox]]
    + [[http://docs-v1.vagrantup.com/v1/docs/base_boxes.html][Vagrant's v1 instructions for creating a Basebox]]
 
-** Installation
+** Ubuntu Installation
+
+   The first step is to create a Virtual Machine in Virtual Box that
+   will be configured per Vagrant standards (has chef, puppet, has a
+   user named "vagrant", configured so that =vagrant ssh= "just
+   works", etc).
+
+   These instructions configure them machine to use 512mb of memory
+   and allow it to use up to 40gb of disk space. These numbers came
+   from Vagrant's recommendations within their documentation.
+
+   In general, Vagrant Boxes should be small when exported, but that
+   wasn't a primary concern here. Instead, the main concern was "a
+   strong foundation to grow on." This one ends up at around 700mb.
 
 *** Setting Up Virtual Machine
 
@@ -55,7 +67,7 @@
     + Select "Create a virtual hard drive now," and then Create.
     + Select VDI
     + Dynamically Allocated
-    + Name of hard drive: vagrant-saucy-64
+    + Name of hard drive: =vagrant-saucy-64=
     + Size: 40 GB.
 
   + Once created, then select Settings.
@@ -91,6 +103,9 @@
   |---------------------+-----------------------|
 
 *** Preparation
+
+    Once the install has been completed, several manual steps are
+    taken before the machine is exported as a Vagrant box.
 
     + Start up the virtual machine and login as vagrant/vagrant. Then,
       run the following:
@@ -195,17 +210,17 @@ Defaults    env_keep="SSH_AUTH_SOCK"
   sudo apt-get clean
 #+END_SRC
 
-*** Creating Box
+** Box Creation
 
-    Given that we've been working on a Virtual Machine that is named
-    =saucy64= and given that we want to create a box named
-    saucy64.box, I ran the following from my home directory:
+   We have been working on a Virtual Machine that is named
+   =vagrant-saucy-64= and we want to create a box named
+   =saucy64.box=. I ran the following from my home directory:
 
-    =vagrant package --base vagrant-saucy-64 --output saucy64.box=
+   =vagrant package --base vagrant-saucy-64 --output saucy64.box=
 
-    This creates a 671mb file named saucy64.box. I noted the MD5 as
-    =03d2fd3a48d8a63464bd61d39191ad45=
+   This creates a ~671mb file named =saucy64.box=. I noted the MD5 as
+   =03d2fd3a48d8a63464bd61d39191ad45=
 
-*** Telling Vagrant about the Box
+** Telling Vagrant about the Box
 
-    =vagrant box add saucy64 saucy64.box=
+   =vagrant box add saucy64 saucy64.box=
