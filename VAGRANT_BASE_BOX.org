@@ -1,0 +1,16 @@
+* Building a Vagrant Base Box
+
+** Objective
+
+   [[http://vagrantup.com][Vagrant]] provides examples of getting started using a base box named
+   precise32. That box is available at this URL:
+   http://files.vagrantup.com/precise32.box. This document describes
+   how you can create your own "basebox," using Ubuntu's Saucy
+   Salamander (13.10) (64 bit) as an example.
+
+   It presumes you have Virtual Box and Vagrant installed, as well as
+   a good network connection to retrieve an ISO for Saucy Salamander
+   and packages that will end up on the machine (chef, puppet, ruby,
+   etc).
+
+   I used Virtual Box 4.3.4 and Vagrant 1.3.5.
