@@ -14,3 +14,198 @@
    etc).
 
    I used Virtual Box 4.3.4 and Vagrant 1.3.5.
+
+** Installs and Downloads
+
+   You'll need [[https://www.virtualbox.org/][Virtual Box]], [[http://www.vagrantup.com/][Vagrant]], and [[http://www.ubuntu.com/download/server][Ubuntu's server]].
+
+** Resources
+
+   I found the following helpful:
+
+   + [[https://github.com/fespinoza/checklist_and_guides/wiki/Creating-a-vagrant-base-box-for-ubuntu-12.04-32bit-server][fespinoza's Checklist for a Basebox]]
+   + [[http://docs-v1.vagrantup.com/v1/docs/base_boxes.html][Vagrant's v1 instructions for creating a Basebox]]
+
+** Installation
+
+*** Setting Up Virtual Machine
+
+  + Start Virtual Box UI.
+
+  + Machine > New
+
+    Enter Following and then Continue:
+
+    |---------+------------------|
+    | Name    | vagrant-saucy-64 |
+    | Type    | Linux            |
+    | Version | Ubuntu (64 bit)  |
+    |---------+------------------|
+
+  + Memory
+
+    Enter Following and then Continue.
+
+    |--------+--------|
+    | Memory | 512 MB |
+    |--------+--------|
+
+  + Hard Drive
+
+    + Select "Create a virtual hard drive now," and then Create.
+    + Select VDI
+    + Dynamically Allocated
+    + Name of hard drive: vagrant-saucy-64
+    + Size: 40 GB.
+
+  + Once created, then select Settings.
+
+    + Audio. Uncheck Enable Audio.
+    + Ports. USB. Uncheck Enable USB.
+
+  + Storage.
+
+    + Add an attachment, a DVD Device.
+    + Select the Downloaded Ubuntu ISO.
+
+*** Ubuntu Install
+
+    I followed through the screens, and entered:
+
+  |---------------------+-----------------------|
+  | Language            | English               |
+  | Location            | United States         |
+  | Keyboard            | Attempt Detection. us |
+  | Hostname            | saucy64               |
+  | Username            | vagrant               |
+  | Account             | vagrant               |
+  | Password            | vagrant               |
+  | Encrypt Home?       | No                    |
+  | Timezone            | Default. American/NYC |
+  | Partitioning        | Entire Disk. Use LVM  |
+  | Disk Setup          | Defaults              |
+  | Proxy               | None                  |
+  | Automatic Updates   | None                  |
+  | Software to Install | None                  |
+  | GRUB to Master?     | Yes                   |
+  |---------------------+-----------------------|
+
+*** Preparation
+
+    + Start up the virtual machine and login as vagrant/vagrant. Then,
+      run the following:
+
+#+BEGIN_SRC sh
+  sudo groupadd admin
+  sudo usermod -G admin vagrant
+#+END_SRC
+
+    + Add the following line to =/etc/sudoers= using =visudo=:
+
+#+BEGIN_SRC
+Defaults    env_keep="SSH_AUTH_SOCK"
+#+END_SRC
+
+    + And replace this:
+
+#+BEGIN_SRC
+%admin ALL=(ALL) ALL
+#+END_SRC
+
+    With:
+
+#+BEGIN_SRC
+%admin ALL=NOPASSWD: ALL
+#+END_SRC
+
+    + Then: =sudo apt-get -y update=
+    + Then: =sudo apt-get -y install build-essential zlib1g-dev libssl-dev libreadlines6-dev libyaml-dev=
+    + Then build the latest Ruby 2.0.0 from source, and install it at
+      /usr/local/bin/ruby. This was p353 for me.
+
+#+BEGIN_SRC sh
+  apt-get -y update
+  apt-get -y install build-essential zlib1g-dev libssl-dev libreadline6-dev libyaml-dev
+  cd /tmp
+  wget http://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz
+  tar -xvfz ruby-2.0.0-p353.tar.gz
+  cd ruby-2.0.0-p353/
+  ./configure --prefix=/usr/local
+  make
+  sudo make install
+#+END_SRC
+
+    + Get chef:
+
+#+BEGIN_SRC sh
+  sudo gem install chef ruby-shadow --no-ri --no-rdoc
+#+END_SRC
+
+    + Get puppet:
+
+#+BEGIN_SRC sh
+  sudo apt-get -y install puppet puppetmaster
+#+END_SRC
+
+    + Get openssh-server:
+
+#+BEGIN_SRC sh
+  sudo apt-get -y install openssh-server
+#+END_SRC
+
+    + Enable "vagrant ssh" by setting up the VM so that it trusts the
+      public vagrant key:
+
+      Details: https://github.com/mitchellh/vagrant/tree/master/keys/
+
+#+BEGIN_SRC sh
+  mkdir ~/.ssh
+  chmod 0700 ~/.ssh
+  cd ~/.ssh
+  wget http://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
+  mv vagrant.pub authorized_keys
+  chmod 0644 authorized_keys
+#+END_SRC
+
+    + Virtual Box Guest Additions
+
+      I think VirtualBox Guest Additions are enabled via dynamic
+      kernel modules, so we need to install "dkms"
+
+#+BEGIN_SRC sh
+  sudo apt-get -y install linux-headers-$(uname -r) build-essential dkms
+  sudo reboot
+#+END_SRC
+
+      Then, use Virtual Box itself to make the Guest Additions
+      available as a CD/DVD. Follow the menus. One way is Devices >
+      Install Guest Additions.
+
+      Then, on the machine, run commands that mount the CD/DVD at
+      =/media/cdrom=:
+
+#+BEGIN_SRC sh
+  sudo mount /dev/cdrom /media/cdrom
+  sudo sh /media/cdrom/VBoxLinuxAdditions.run
+#+END_SRC
+
+    + Clean up any tmp files or unneeded packages:
+
+#+BEGIN_SRC sh
+  sudo apt-get clean
+#+END_SRC
+
+*** Creating Box
+
+    Given that we've been working on a Virtual Machine that is named
+    =saucy64= and given that we want to create a box named
+    saucy64.box, I ran the following from my home directory:
+
+    =vagrant package --base vagrant-saucy-64 --output saucy64.box=
+
+    This creates a 671mb file named saucy64.box. I noted the MD5 as
+    =03d2fd3a48d8a63464bd61d39191ad45=
+
+*** Telling Vagrant about the Box
+
+    =vagrant box add saucy64 saucy64.box=
