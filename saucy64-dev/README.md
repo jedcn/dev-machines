@@ -4,7 +4,8 @@ These are instructions for creating `saucy64-dev.box`, a general
 purpose Ubuntu development machine.
 
 This box is available online and can be downloaded here:
-https://somewhere.com/saucy64-dev.box.
+https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box. MD5:
+d943dd90fe4b28fd127c2f0646286230.
 
 Alternatively, it can be referenced (and automatically downloaded) as
 a base box in a `Vagrantfile`:
@@ -13,7 +14,7 @@ a base box in a `Vagrantfile`:
 Vagrant.configure("2") do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "saucy64-dev"
-  config.vm.box_url = "https://somewhere.com/saucy64-dev.box"
+  config.vm.box_url = "https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box"
 end
 ```
 
@@ -52,7 +53,7 @@ The box `saucy64-dev.box` was created with the following:
    you have a new machine named 'vagrant-saucy-64-dev'.
 
 3. Shut the machine down with `vagrant halt`, and then run `vagrant
-   package --base vagrant-saucy-64-dev --output saucy64-dev.box``
+   package --base vagrant-saucy-64-dev --output saucy64-dev.box`
 
 ## Hosting
 
