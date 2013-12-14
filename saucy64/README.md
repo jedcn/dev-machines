@@ -25,22 +25,11 @@ end
 
 Serve as a stand in for the precise32.box referenced on
 https://www.vagrantup.com/. The URL of the precise32 box is:
-http://files.vagrantup.com/precise32.box.
-
-saucy64.box is my attempt to build
-
-See [manifests/default.pp][manifests/default.pp] for an official list
-of what is included.
+http://files.vagrantup.com/precise32.box. The main difference being
+that it's Saucy Salamander instead of Precise Pangolin and 64bit
+instead of 32bit.
 
 ## Mechanism
 
 The box `saucy64-dev.box` was created by following the instructions in
 [CREATING_BASE_BOX][CREATING_BASE_BOX].
-
-
-## Hosting
-
-   This particular box is available for download. If you visit here:
-   https://ctct.box.com/jedcn-saucy64-box you can download it. Once
-   downloaded, you can run the =vagrant box add= command from above,
-   and then setup your =Vagrantfile= to look like:
