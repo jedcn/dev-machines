@@ -7,14 +7,13 @@ development machines that I use with [Vagrant][vagrant].
 
 ### saucy64
 
-A Basic Ubuntu Saucy Salamander 64 bit server installation. Here are
-[additional details for saucy64][saucy64-readme].
+A Basic Ubuntu Saucy Salamander 64 bit server
+installation. [Details for saucy64][saucy64-readme].
 
 ### saucy64-dev
 
 This machine builds off of saucy64.box and adds some additional tools,
-like git and zsh. Here are
-[additional details for saucy64-dev][saucy64-dev-readme].
+like git and zsh. [Details for saucy64-dev][saucy64-dev-readme].
 
 [vagrant]: https://www.vagrantup.com
 [saucy64-readme]: saucy64/README.md
