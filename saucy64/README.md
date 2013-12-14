@@ -1,4 +1,4 @@
-# Saucy 64
+# saucy64
 
 These are instructions for creating `saucy64.box`, a general purpose
 Ubuntu development machine.
