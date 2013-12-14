@@ -33,3 +33,5 @@ instead of 32bit.
 
 The box `saucy64-dev.box` was created by following the instructions in
 [CREATING_BASE_BOX][CREATING_BASE_BOX].
+
+[CREATING_BASE_BOX]: CREATING_BASE_BOX.org
