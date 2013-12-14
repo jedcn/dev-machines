@@ -1,4 +1,4 @@
-# Saucy 64 Dev
+# saucy64-dev
 
 These are instructions for creating `saucy64-dev.box`, a general
 purpose Ubuntu development machine.
@@ -6,6 +6,9 @@ purpose Ubuntu development machine.
 This box is available online and can be downloaded here:
 https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box. MD5:
 d943dd90fe4b28fd127c2f0646286230.
+
+It can be added to vagrant via: `vagrant box add saucy64
+https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box`
 
 Alternatively, it can be referenced (and automatically downloaded) as
 a base box in a `Vagrantfile`:
@@ -55,9 +58,4 @@ The box `saucy64-dev.box` was created with the following:
 3. Shut the machine down with `vagrant halt`, and then run `vagrant
    package --base vagrant-saucy-64-dev --output saucy64-dev.box`
 
-## Hosting
-
-   This particular box is available for download. If you visit here:
-   https://ctct.box.com/jedcn-saucy64-box you can download it. Once
-   downloaded, you can run the =vagrant box add= command from above,
-   and then setup your =Vagrantfile= to look like:
+[manifests/default.pp]: manifests/default.pp
