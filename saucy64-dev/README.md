@@ -7,7 +7,7 @@ This box is available online and can be downloaded here:
 https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box. MD5:
 d943dd90fe4b28fd127c2f0646286230.
 
-It can be added to vagrant via: `vagrant box add saucy64
+It can be added to vagrant via: `vagrant box add saucy64-dev
 https://s3.amazonaws.com/jedcn-dev-machines/saucy64-dev.box`
 
 Alternatively, it can be referenced (and automatically downloaded) as
