@@ -8,17 +8,22 @@ if [ -d $HOME/.homesick/repos/homeshick ]
 then
   echo ""
   echo "Homesick already installed.."
+  echo ""
 else
   echo ""
   echo "Installing homeshick.."
+  echo ""
   git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
   source "$HOME/.homesick/repos/homeshick/homeshick.sh"
 
   echo ""
   echo "Adding Castles.."
-  homeshick clone --batch https://github.com/robbyrussell/oh-my-zsh
+  echo ""
+  homeshick clone https://github.com/robbyrussell/oh-my-zsh
+  ln -s $HOME/.homesick/repos/oh-my-zsh $HOME/.oh-my-zsh
   homeshick clone --batch https://github.com/jedcn/dot-org-files
   homeshick link --force
-
-  cd; ln -s .homesick/repos/oh-my-zsh .oh-my-zsh
 fi
+
+#
+# Change shell to zsh if zsh is present.
