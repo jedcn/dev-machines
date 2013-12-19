@@ -21,9 +21,20 @@ else
   echo ""
   homeshick clone https://github.com/robbyrussell/oh-my-zsh
   ln -s $HOME/.homesick/repos/oh-my-zsh $HOME/.oh-my-zsh
+
   homeshick clone --batch https://github.com/jedcn/dot-org-files
   homeshick link --force
 fi
 
 #
 # Change shell to zsh if zsh is present.
+zsh=$(which zsh)
+if [ -x "$zsh" ] ; then
+  echo ""
+  echo "Changing Shell to ${zsh}.. may need password"
+  echo ""
+  sudo chsh --shell $zsh `whoami`
+  echo ""
+  echo "Logout and log back in to start using new shell"
+  echo ""
+fi
