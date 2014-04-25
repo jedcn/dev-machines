@@ -1,0 +1,240 @@
+* Building a Vagrant Box
+** Objectives
+
+   + Provide a box with a fresh install of Ubuntu's Trusty Tahr (64
+     bit).
+
+   + Capture the initial operating system as a box suitable for use
+     in Vagrant.
+
+   This snapshot can be used as a stepping stone to many futures,
+   including one where we install Ruby, and Puppet, and Chef, etc.
+
+   But-- what's important is that this is just a stepping stone. It
+   doesn't have anything extra yet.
+
+   It's just an snapshot of the *initial* system right after the
+   install finished.
+
+** Installs and Downloads
+
+   You'll need [[https://www.virtualbox.org/][Virtual Box]], [[http://www.vagrantup.com/][Vagrant]], and [[http://www.ubuntu.com/download/server][Ubuntu's server]].
+
+   If it matters, I did this with Virtual Box 4.3.10 and Vagrant
+   1.5.3, and Ubuntu 14.04.
+
+** Resources
+
+   I started with my notes for [[file:~/c/personal/dev-machines/saucy64/CREATING_BASE_BOX.org][building out a Saucy64 base box]]. I
+   then punted on everything beyond the install.
+
+** Ubuntu Installation
+
+   These instructions configure them machine to use 512mb of memory
+   and allow it to use up to 40gb of disk space. These numbers came
+   from Vagrant's recommendations within their documentation.
+
+   XXX
+
+   In general, Vagrant Boxes should be small when exported, but that
+   wasn't a primary concern here. Instead, the main concern was "a
+   strong foundation to grow on." This one ends up at around 700mb.
+
+*** Setting Up Virtual Machine
+
+  + Start Virtual Box UI.
+
+  + Machine > New
+
+    Enter Following and then Continue:
+
+    |---------+-------------------|
+    | Name    | vagrant-trusty-64 |
+    | Type    | Linux             |
+    | Version | Ubuntu (64 bit)   |
+    |---------+-------------------|
+
+  + Memory
+
+    Enter Following and then Continue.
+
+    |--------+--------|
+    | Memory | 512 MB |
+    |--------+--------|
+
+  + Hard Drive
+
+    + Select "Create a virtual hard drive now," and then Create.
+    + Select VDI
+    + Dynamically Allocated
+    + Name of hard drive: =vagrant-trusty-64=
+    + Size: 40 GB.
+
+  + Once created, then select Settings.
+
+    + Audio. Uncheck Enable Audio.
+
+  + Storage.
+
+    + Next to CD/DVD Drive click on the CD-ROM icon.
+    + Select the Downloaded Ubuntu ISO.
+
+*** Ubuntu Install
+
+    Power on the machine by selecting "Start" to begin the
+    installation process. I selected 'English' and then 'Install
+    Ubuntu Server'.
+
+    As I moved through several screens, I entered:
+
+  |---------------------+-----------------------|
+  | Language            | English               |
+  | Location            | United States         |
+  | Keyboard            | Attempt Detection. us |
+  | Hostname            | saucy64               |
+  | Username            | vagrant               |
+  | Account             | vagrant               |
+  | Password            | vagrant               |
+  | Encrypt Home?       | No                    |
+  | Timezone            | Default. American/NYC |
+  | Partitioning        | Entire Disk. Use LVM  |
+  | Disk Setup          | Defaults              |
+  | Proxy               | None                  |
+  | Automatic Updates   | None                  |
+  | Software to Install | None                  |
+  | GRUB to Master?     | Yes                   |
+  |---------------------+-----------------------|
+
+*** Preparation
+
+    Once the install has been completed, several manual steps are
+    taken before the machine is exported as a Vagrant box.
+
+    + Start up the virtual machine and login as vagrant/vagrant. Then,
+      run the following:
+
+#+BEGIN_SRC sh
+  sudo groupadd admin
+  sudo usermod -G admin vagrant
+#+END_SRC
+
+    + Add the following line to =/etc/sudoers= using =visudo=:
+
+#+BEGIN_SRC
+Defaults    env_keep="SSH_AUTH_SOCK"
+#+END_SRC
+
+    + And replace this:
+
+#+BEGIN_SRC
+%admin ALL=(ALL) ALL
+#+END_SRC
+
+    With:
+
+#+BEGIN_SRC
+%admin ALL=NOPASSWD: ALL
+#+END_SRC
+
+    Then exit nano with CTRL-X
+
+    + Get openssh-server:
+
+#+BEGIN_SRC sh
+  sudo apt-get -y install openssh-server
+#+END_SRC
+
+    + Enable "vagrant ssh" by setting up the VM so that it trusts the
+      public vagrant key:
+
+      Details: https://github.com/mitchellh/vagrant/tree/master/keys/
+
+#+BEGIN_SRC sh
+  mkdir ~/.ssh
+  chmod 0700 ~/.ssh
+  cd ~/.ssh
+  wget https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
+  mv vagrant.pub authorized_keys
+  chmod 0644 authorized_keys
+#+END_SRC
+
+    + Virtual Box Guest Additions
+
+      If you don't have VirtualBox Guest Additions, you can't map
+      ports or sync file systems. You will find that you need basic
+      build tools, like make, if you try to install Guest Additions.
+
+      Further, I think VirtualBox Guest Additions are enabled via
+      dynamic kernel modules, so we need to install "dkms."
+
+      This adds another 105mb.
+
+      In the end, here is what I ran:
+
+#+BEGIN_SRC sh
+  sudo apt-get -y install linux-headers-$(uname -r) build-essential dkms
+  sudo reboot
+#+END_SRC
+
+      Then, use Virtual Box itself to make the Guest Additions
+      available as a CD/DVD. Follow the menus. One way is Devices >
+      Install Guest Additions.
+
+      Then, on the machine, run commands that mount the CD/DVD at
+      =/media/cdrom=:
+
+#+BEGIN_SRC sh
+  sudo mount /dev/cdrom /media/cdrom
+  sudo sh /media/cdrom/VBoxLinuxAdditions.run
+#+END_SRC
+
+      I was doing this with VirtualBox 4.3.10, and if you export at
+      this point you won't be able to mount the shared file
+      system. Here's a link to the issue and two solutions:
+
+      http://stackoverflow.com/questions/22717428/vagrant-error-failed-to-mount-folders-in-linux-guest
+      https://github.com/mitchellh/vagrant/issues/3341
+
+      At any rate, I ran the following to fix it:
+
+#+BEGIN_SRC sh
+  sudo ln -s /opt/VBoxGuestAdditions-4.3.10/lib/VBoxGuestAdditions /usr/lib/VBoxGuestAdditions
+#+END_SRC
+
+    + Clean up any tmp files or unneeded packages:
+
+#+BEGIN_SRC sh
+  sudo apt-get clean
+#+END_SRC
+
+    Then log out and shut it down.
+
+** Box Creation
+
+   We have been working on a Virtual Machine that is named
+   =vagrant-trusty-64= and we want to create a box named
+   =trusty64-initial.box=. I ran the following from my home directory:
+
+   =vagrant package --base vagrant-trusty-64 --output trusty64-initial-1.0.0.box=
+
+   This creates a ~580mb file named =trusty64-initial.box=. I noted
+   the MD5 as =d729ed6dfc9664196bedd7a422c30db8=
+
+** TODO Telling Vagrant about the Box
+
+   =vagrant box add trusty64-initial-1.0.0 trusty64-initial-1.0.0.box=
+
+** TODO Host, somewhere.
+
+   This particular box is available for download at
+   https://s3.amazonaws.com/jedcn-dev-machines/trusty64-initial-1.0.0.box. Once
+   downloaded, you can run the =vagrant box add= command from above,
+   and then setup your =Vagrantfile= to look like:
+
+#+BEGIN_SRC ruby
+  Vagrant.configure("2") do |config|
+    # Every Vagrant virtual environment requires a box to build off of.
+    config.vm.box = 'trusty64-initial-1.0.0'
+    config.vm.box_url = 'https://s3.amazonaws.com/jedcn-dev-machines/trusty64-initial-1.0.0.box'
+  end
+#+END_SRC
