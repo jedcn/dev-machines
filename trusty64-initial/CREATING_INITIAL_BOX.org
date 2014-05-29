@@ -30,11 +30,9 @@
 
 ** Ubuntu Installation
 
-   These instructions configure them machine to use 512mb of memory
-   and allow it to use up to 40gb of disk space. These numbers came
-   from Vagrant's recommendations within their documentation.
-
-   XXX
+   These instructions configure the machine to use 512mb of memory and
+   allow it to use up to 40gb of disk space. These numbers came from
+   Vagrant's recommendations within their documentation.
 
    In general, Vagrant Boxes should be small when exported, but that
    wasn't a primary concern here. Instead, the main concern was "a
@@ -91,7 +89,7 @@
   | Language            | English               |
   | Location            | United States         |
   | Keyboard            | Attempt Detection. us |
-  | Hostname            | saucy64               |
+  | Hostname            | trusty64              |
   | Username            | vagrant               |
   | Account             | vagrant               |
   | Password            | vagrant               |
@@ -213,18 +211,19 @@ Defaults    env_keep="SSH_AUTH_SOCK"
 
    We have been working on a Virtual Machine that is named
    =vagrant-trusty-64= and we want to create a box named
-   =trusty64-initial.box=. I ran the following from my home directory:
+   =trusty64-initial-1.0.0.box=. I ran the following from my home
+   directory:
 
    =vagrant package --base vagrant-trusty-64 --output trusty64-initial-1.0.0.box=
 
    This creates a ~580mb file named =trusty64-initial.box=. I noted
    the MD5 as =d729ed6dfc9664196bedd7a422c30db8=
 
-** TODO Telling Vagrant about the Box
+** Telling Vagrant about the Box
 
    =vagrant box add trusty64-initial-1.0.0 trusty64-initial-1.0.0.box=
 
-** TODO Host, somewhere.
+** Host, somewhere.
 
    This particular box is available for download at
    https://s3.amazonaws.com/jedcn-dev-machines/trusty64-initial-1.0.0.box. Once
