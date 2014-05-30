@@ -8,9 +8,13 @@ Ubuntu Server installation of Trusty Tahr with:
   vagrant key.
 * VirtualBox Guest Additions
 
-This box is available online and can be downloaded here:
+The 1.0.0 version of this box is available online and can be
+downloaded here:
 https://s3.amazonaws.com/jedcn-dev-machines/trusty64-initial-1.0.0.box. MD5:
 d729ed6dfc9664196bedd7a422c30db8
+
+I don't expect that there will be new versions-- but I've added the
+`1.0.0` to leave room for the possiblity of changes.
 
 It can be added to vagrant via: `vagrant box add
 trusty64-initial-1.0.0
